@@ -7,33 +7,36 @@ class Handler implements URLHandler {
     // various requests.
     
     ArrayList<String> strList = new ArrayList<String>();
-    ArrayList<String> container = new ArrayList<String>();
 
-   
     public String handleRequest(URI url) {
         if (url.getPath().equals("/")) {
             return String.format("please type");
-        }else if(url.getPath().equals("/add")){
+        }else if(url.getPath().contains("/add")){
             String[] parameters = url.getQuery().split("=");
+            if (parameters[0].equals("s")) {
             strList.add(parameters[1]);
+            }
         } 
         else {
             System.out.println("Path: " + url.getPath());
             if (url.getPath().contains("/search")) {
                 String[] parameters = url.getQuery().split("=");
-                for(String s:strList){
-                    if(s.contains(parameters[1])){
-                        container.add(s);
-                    }
-                }     
+                String result = "";
+                for(int i=0;i<strList.size();i++){
+                    if((strList.get(i).contains(parameters[1])&& (i==strList.size()-1))){
+                        result += strList.get(i);
+                    }else if(strList.get(i).contains(parameters[1])){
+                        result += strList.get(i) + " and ";
+                    }else return "not found!";
+                }
+                return result;     
             }
-            }
-            return "404 Not Found!";
+            }return "continue adding";
         }
 }
 
 
-class NumberServer {
+class SearchEngine {
     public static void main(String[] args) throws IOException {
         if(args.length == 0){
             System.out.println("Missing port number! Try any number between 1024 to 49151");
